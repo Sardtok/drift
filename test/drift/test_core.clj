@@ -141,10 +141,10 @@
   (is (= 20110600000030 (migration-number-from-namespace "imsma.database.migrations.20110600000030-update-cdfvalue-types"))))
 
 (deftest test-migration-compartor
-  (let [ascending-migration-compartor (migration-compartor true)]
+  (let [ascending-migration-compartor (migration-comparator true)]
     (is (< (.compare ascending-migration-compartor "imsma.database.migrations.20110600000030-update-cdfvalue-types" "imsma.database.migrations.20111113100406-init-for-clojure")))
     (is (> (.compare ascending-migration-compartor "imsma.database.migrations.20111113100406-init-for-clojure" "imsma.database.migrations.20110600000030-update-cdfvalue-types"))))
-  (let [descending-migration-compartor (migration-compartor false)]
+  (let [descending-migration-compartor (migration-comparator false)]
     (is (> (.compare descending-migration-compartor "imsma.database.migrations.20110600000030-update-cdfvalue-types" "imsma.database.migrations.20111113100406-init-for-clojure")))
     (is (< (.compare descending-migration-compartor "imsma.database.migrations.20111113100406-init-for-clojure" "imsma.database.migrations.20110600000030-update-cdfvalue-types")))))
 

@@ -95,7 +95,7 @@
     (when-let [migration-number-str (re-find #"^[0-9]+" (last (string/split (namespace-name-str migration-namespace) #"\.")))]
       (Long/parseLong migration-number-str))))
 
-(defn migration-compartor [ascending?]
+(defn migration-comparator [ascending?]
   (reify Comparator
     (compare [_ namespace1 namespace2]
       (try
@@ -121,7 +121,7 @@
   ([migration-namespaces] (sort-migration-namespaces migration-namespaces true))
   ([migration-namespaces ascending?]
    (seq
-     (doto (TreeSet. ^Comparator (migration-compartor ascending?))
+     (doto (TreeSet. ^Comparator (migration-comparator ascending?))
        (.addAll migration-namespaces)))))
 
 (defn unsorted-migration-namespaces []

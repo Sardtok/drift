@@ -22,10 +22,10 @@
    be passed on to the user-supplied init function. tools.cli is no use for this"
   [args specs]
   (reduce (fn [[opts args] spec]
-                 (let [[before match-rest] (split-args args (:matcher spec))
-                       [new-opts after] (remove-opt match-rest spec)]
+            (let [[before match-rest] (split-args args (:matcher spec))
+                  [new-opts after] (remove-opt match-rest spec)]
 
-                   [(merge opts new-opts) (vec (concat before after))]))
+              [(merge opts new-opts) (vec (concat before after))]))
           [{} args]
           specs))
 

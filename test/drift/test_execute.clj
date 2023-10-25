@@ -1,9 +1,8 @@
 (ns drift.test-execute
-  (:use clojure.test
-        drift.execute)
-  (:require [config.migrate-config :as config]
-            config.finished-config
-            [test-helper :as test-helper]))
+  (:require [config.finished-config]
+            [config.migrate-config :as config])
+  (:use [clojure.test]
+[drift.execute]))
 
 (deftest test-version-number
   (is (= 0 (version-number 0)))
@@ -13,12 +12,12 @@
 (defn
   test-migrated? [version]
   (is (compare-and-set! config/init-run? true false))
-  (is (= version (config/memory-current-version)))) 
+  (is (= version (config/memory-current-version))))
 
 (deftest test-migrate
   (compare-and-set! config/init-run? false false)
   (migrate nil [])
-  (test-migrated? 2) 
+  (test-migrated? 2)
   (migrate 0 [])
   (test-migrated? 0)
   (migrate "1" [])
@@ -58,4 +57,4 @@
   (with-redefs [drift.runner/update-to-version (fn [version])]
     (run ["-version" "1234" "bloop" "-c" "config.finished-config/migrate-config" "blargh"])
 
-   (is (= @config.finished-config/finished-run? true))))
+    (is (= @config.finished-config/finished-run? true))))

@@ -7,7 +7,7 @@
             [drift.core :as core]))
 
 (defn
-#^{ :doc "Prints out how to use the generate migration command." }
+  #^{:doc "Prints out how to use the generate migration command."}
   migration-usage []
   (println "You must supply a migration name (Like migration-name).")
   (println "Usage: lein.bat migration <migration name>"))
@@ -20,32 +20,32 @@
 (defn up
   \"Migrates the database up to version " migration-number ".\"
   []
-  " (or up-content (str "(println \"" migration-namespace " up...\")"))")
+  " (or up-content (str "(println \"" migration-namespace " up...\")")) ")
 
 (defn down
   \"Migrates the database down from version " migration-number ".\"
   []
-  " (or down-content (str "(println \"" migration-namespace " down...\")"))")")))
+  " (or down-content (str "(println \"" migration-namespace " down...\")")) ")")))
 
 (defn
-#^{ :doc "Generates the migration content and saves it into the given migration file." }
-  generate-file-content [migration-file migration-name ns-content up-content down-content]
+  #^{:doc "Generates the migration content and saves it into the given migration file."}
+  generate-file-content [migration-file ns-content up-content down-content]
   (let [migration-namespace (core/migration-namespace migration-file)
         content (create-file-content migration-namespace ns-content up-content down-content)]
     (spit migration-file content)))
 
 (defn
-#^{ :doc "Creates the migration file from the given migration-name." }
-  generate-migration-file 
-    ([migration-name] (generate-migration-file migration-name (config/default-ns-content) nil nil))
-    ([migration-name ns-content up-content down-content]
-      (core/run-init [])
-      (if migration-name
-        (let [migrate-directory (builder/find-or-create-migrate-directory)
-              migration-file (builder/create-migration-file migrate-directory migration-name)] 
-          (generate-file-content migration-file migration-name ns-content up-content down-content))
-        (migration-usage))
-      (core/run-finished)))
+  #^{:doc "Creates the migration file from the given migration-name."}
+  generate-migration-file
+  ([migration-name] (generate-migration-file migration-name (config/default-ns-content) nil nil))
+  ([migration-name ns-content up-content down-content]
+   (core/run-init [])
+   (if migration-name
+     (let [migrate-directory (builder/find-or-create-migrate-directory)
+           migration-file (builder/create-migration-file migrate-directory migration-name)]
+       (generate-file-content migration-file ns-content up-content down-content))
+     (migration-usage))
+   (core/run-finished)))
 
 (defn generate-migration-file-cmdline
   "parse command-line args from lein, set up any custom config,

@@ -1,12 +1,13 @@
 (ns drift.test-args
-  (:use clojure.test drift.args))
+  (:use [clojure.test]
+        [drift.args]))
 
 (deftest test-split-args
-  (is (=  (split-args ["foo" "-v" "bar" "baz"] #{"-v"} )
-          [["foo"] ["-v" "bar" "baz"]]))
+  (is (= (split-args ["foo" "-v" "bar" "baz"] #{"-v"})
+         [["foo"] ["-v" "bar" "baz"]]))
 
-  (is (=  (split-args ["foo" "bar" "baz"] #{"-v"} )
-          [["foo" "bar" "baz"] []])))
+  (is (= (split-args ["foo" "bar" "baz"] #{"-v"})
+         [["foo" "bar" "baz"] []])))
 
 (deftest test-remove-opt
   (is (= (remove-opt ["-v" "123" "foo" "bar"] {:key :version :matcher #{"-v"}})

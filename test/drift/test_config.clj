@@ -1,8 +1,7 @@
 (ns drift.test-config
-  (:import [java.io File])
-  (:use clojure.test drift.config)
-  (:require [test-helper :as test-helper]
-            [config.migrate-config :as migrate-config]))
+  (:require [config.migrate-config :as migrate-config])
+  (:use [clojure.test]
+        [drift.config]))
 
 (deftest test-find-config-namespace
   (is (find-config-namespace)))
@@ -17,14 +16,14 @@
     (is (thrown? RuntimeException (find-config)))))
 
 (deftest test-current-version-fn
-  (is (= println (current-version-fn {:current-version println })))
+  (is (= println (current-version-fn {:current-version println})))
   (is (= ((migrate-config/migrate-config) :current-version) (current-version-fn)))
   (is (thrown-with-msg? java.lang.NullPointerException
                         #"Missing .* :current-version"
                         (current-version-fn {}))))
 
 (deftest test-update-version-fn
-  (is (= println (update-version-fn {:update-version println })))
+  (is (= println (update-version-fn {:update-version println})))
   (is (= ((migrate-config/migrate-config) :update-version) (update-version-fn)))
   (is (thrown-with-msg? java.lang.NullPointerException
                         #"Missing .* :update-version"
@@ -51,8 +50,8 @@
 (deftest test-find-src-dir
   (is (= "/test/" (find-src-dir)))
   (is (= "/test/" (find-src-dir (find-config))))
-  (is (= "/something/" (find-src-dir { :directory "/something/somewhere" })))
-  (is (= "/src/" (find-src-dir { :src "/src/" } ))))
+  (is (= "/something/" (find-src-dir {:directory "/something/somewhere"})))
+  (is (= "/src/" (find-src-dir {:src "/src/"}))))
 
 (deftest test-outer-dir-in-path
   (is (= "/test/" (outer-dir-in-path "/test/migrations")))

@@ -11,17 +11,17 @@
 (defn memory-update-version [new-version]
   (swap! version #(identity %2) new-version))
 
-(defn init [args]
+(defn init [_]
   (compare-and-set! init-run? false true))
 
 (defn finished []
   (compare-and-set! finished-run? false true))
 
 (defn migrate-config []
-  { :directory "/test/migrations"
-    :current-version memory-current-version
-    :update-version memory-update-version
-    :init init
-    :finished finished
-    :ns-content "\n  (:use clojure.contrib.sql)"
-    :migration-number-generator builder/incremental-migration-number-generator })
+  {:directory "/test/migrations"
+   :current-version memory-current-version
+   :update-version memory-update-version
+   :init init
+   :finished finished
+   :ns-content "\n  (:use clojure.contrib.sql)"
+   :migration-number-generator builder/incremental-migration-number-generator})

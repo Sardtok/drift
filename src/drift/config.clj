@@ -1,7 +1,8 @@
-(ns drift.config
-  (:require [clojure.string :as string]))
+(ns drift.config)
 
-(declare find-migrate-dir-name outer-dir-in-path find-config missing-param)
+(declare find-migrate-dir-name outer-dir-in-path find-config missing-param
+         current-version-fn default-ns-content find-init-fn find-finished-fn find-src-dir
+         migration-namespaces migration-number-generator namespace-prefix update-version-fn)
 
 (def default-config-fn-symbol 'config.migrate-config/migrate-config)
 (def ^:dynamic *config-fn-symbol* default-config-fn-symbol)
@@ -56,7 +57,7 @@
       (throw (RuntimeException. (str "can't find config function: " *config-fn-symbol*))))))
 
 (defn- missing-param [param]
-  (throw (java.lang.NullPointerException.
+  (throw (NullPointerException.
            (str "Missing configuration parameter in migrate-config: " param))))
 
 (def ^:private separators #{"/" "\\"})

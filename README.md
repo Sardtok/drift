@@ -1,12 +1,12 @@
 # drift
 
 Drift is a migration library written in Clojure. Drift works much like
-Rails migrations where a directory in your project contains all of the
+Rails migrations where a directory in your project contains all the
 migration files. Drift will detect which migration files need to be
 run and run them as appropriate.
 
 Migration files must contain an `up` and `down` function in which you can
-perform the migration using your prefered database library.
+perform the migration using your preferred database library.
 
 ## Usage
 
@@ -101,7 +101,7 @@ holding the current database version:
 ```
 
 Your migration files must contain an `up` and `down` function in which you
-perform the migration and rollback using your prefered database library.
+perform the migration and rollback using your preferred database library.
 
 For example:
 

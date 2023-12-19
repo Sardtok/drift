@@ -1,19 +1,19 @@
 (ns drift.test-core
   (:use [clojure.test]
         [drift.core])
-  (:import (java.io File)))
+  (:import (java.nio.file Path)))
 
 (def migration-name "create-tests")
 
 (deftest test-migrate-directory
   (let [migrate-dir (migrate-directory)]
     (is migrate-dir)
-    (is (instance? File migrate-dir))))
+    (is (instance? Path migrate-dir))))
 
 (deftest test-find-migrate-directory
   (let [migrate-dir (find-migrate-directory)]
     (is migrate-dir)
-    (is (instance? File migrate-dir))))
+    (is (instance? Path migrate-dir))))
 
 (deftest test-migrate-namespace-prefix-from-directory
   (is (= "migrations" (migrate-namespace-prefix-from-directory)))
@@ -152,7 +152,7 @@
   (let [migrate-directory (find-migrate-directory)]
     (is (not (nil? migrate-directory)))
     (when migrate-directory
-      (is (= "migrations" (.getName migrate-directory))))))
+      (is (= "migrations" (str (.getFileName migrate-directory)))))))
 
 (deftest test-migration-namespaces-in-range
   (let [migration-namespaces (migration-namespaces-in-range 0 1)]
@@ -195,8 +195,9 @@
 
 (deftest test-find-migration-file
   (let [migration-file (find-migration-file "create-tests")]
+    (println migration-file)
     (is migration-file)
     (when migration-file
-      (is (instance? File migration-file))
-      (is (= "001_create_tests.clj" (.getName migration-file)))
-      (is (= (find-migrate-directory) (.getParentFile migration-file))))))
+      (is (instance? Path migration-file))
+      (is (= "001_create_tests.clj" (str (.getFileName migration-file))))
+      (is (= (find-migrate-directory) (.getParent migration-file))))))

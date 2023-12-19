@@ -1,6 +1,6 @@
 (ns test-helper
-  (:use [clojure.test])
-  (:import (java.io File)
+  (:require [clojure.test :refer [is]])
+  (:import (java.nio.file Path)
            (org.apache.log4j ConsoleAppender Level Logger PatternLayout)
            (org.apache.log4j.varia LevelRangeFilter)))
 
@@ -20,9 +20,9 @@
   #^{:doc "Verifies the given file is not nil, is an instance of File, and has the given name."}
   test-file [file expected-file-name]
   (is file)
-  (is (instance? File file))
+  (is (instance? Path file))
   (when file
-    (is (= expected-file-name (.getName file)))))
+    (is (= expected-file-name (str (.getFileName file))))))
 
 (defn
   #^{:doc "Simply calls test-file on the given directory and name."}

@@ -1,8 +1,10 @@
 (ns drift.test-execute
-  (:require [config.finished-config]
-            [config.migrate-config :as config])
-  (:use [clojure.test]
-[drift.execute]))
+  (:require [clojure.test :refer [deftest is]]
+            [config.finished-config]
+            [config.migrate-config :as config]
+            [drift.config]
+            [drift.execute :refer [migrate run version-number]]
+            [drift.runner]))
 
 (deftest test-version-number
   (is (= 0 (version-number 0)))
@@ -31,9 +33,11 @@
   (test-migrated? 2)
   (run ["-version" "0"])
   (test-migrated? 0)
-  (run ["-version" "1" "-other" "args"])
+  (run ["-version" "1" "--" "-other" "args"])
   (test-migrated? 1)
   (run ["-other" "args" "-version" "0"])
+  (is (= 1 (config/memory-current-version)))
+  (run ["-version" "0" "--" "-other" "args"])
   (test-migrated? 0))
 
 (deftest test-run-custom-config
@@ -55,6 +59,6 @@
 (deftest test-finished-fn-called
   []
   (with-redefs [drift.runner/update-to-version (fn [version])]
-    (run ["-version" "1234" "bloop" "-c" "config.finished-config/migrate-config" "blargh"])
+    (run ["-version" "1234" "-c" "config.finished-config/migrate-config" "--" "bloop" "blargh"])
 
     (is (= @config.finished-config/finished-run? true))))

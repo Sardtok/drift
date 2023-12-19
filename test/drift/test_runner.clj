@@ -1,9 +1,10 @@
 (ns drift.test-runner
-  (:require [drift.core :as core]
+  (:require [clojure.test :refer [deftest is use-fixtures]]
+            [drift.core :as core]
+            [drift.runner :refer [add-listener migrate-down migrate-down-all migrate-up migrate-up-all
+                                  remove-listener run-migrate-down run-migrate-up runner-listeners update-to-version]]
             [drift.version :as version]
             [test-helper])
-  (:use [clojure.test]
-        [drift.runner])
   (:import (drift.listener_protocol ListenerProtocol)))
 
 (def first-migration "create-tests")

@@ -23,12 +23,12 @@
   (is (= (parse-args ["foo" "-v" "10" "bar" "--config" "conf" "baz"]
                      [{:key :version :matcher #{"-v" "--version"}}
                       {:key :config :matcher #{"-v" "--config"}}])
-         [{:version "10" :config "conf"} ["foo" "bar" "baz"]])))
+         [{:version "10" :config "conf"} nil ["foo" "bar" "baz"]])))
 
 (deftest test-parse-migrate-args
-  (is (= (parse-migrate-args ["foo" "--other" "blah" "-v" "10" "bar" "--config" "conf" "baz"])
-         [{:version "10" :config 'conf} ["foo" "--other" "blah" "bar" "baz"]])))
+  (is (= (parse-migrate-args ["foo" "-v" "10" "--config" "conf" "--" "--other" "blah" "bar" "baz"])
+         [{:version "10" :config 'conf} ["--other" "blah" "bar" "baz"] ["foo"]])))
 
 (deftest test-parse-create-migration-args
   (is (= (parse-create-migration-args ["foo" "--other" "blah" "-v" "10" "bar" "--config" "conf" "baz"])
-         [{:config 'conf} ["foo" "--other" "blah" "-v" "10" "bar" "baz"]])))
+         [{:config 'conf} nil ["foo" "--other" "blah" "-v" "10" "bar" "baz"]])))

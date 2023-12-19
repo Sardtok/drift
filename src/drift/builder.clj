@@ -1,10 +1,10 @@
 (ns drift.builder
-  (:require [clojure.tools.loading-utils :as loading-utils]
-            [clojure.tools.logging :as logging]
-            [clojure.tools.string-utils :as util-string-utils]
+  (:require [clojure.tools.logging :as logging]
             [drift.config :as config]
-            [drift.core :as core])
-  (:import (java.io File)
+            [drift.core :as core]
+            [drift.utils :as utils])
+  (:import (java.nio.file Files Paths Path LinkOption)
+           (java.nio.file.attribute FileAttribute)
            (java.text SimpleDateFormat)
            (java.util Date)))
 
@@ -14,7 +14,7 @@
   ([] (find-or-create-migrate-directory (core/migrate-directory)))
   ([migrate-directory]
    (when migrate-directory
-     (if (.exists migrate-directory)
+     (if (Files/exists migrate-directory (make-array LinkOption 0))
        (logging/info "Migrate directory already exists.")
        (do
          (logging/info "Creating migrate directory...")
@@ -22,7 +22,7 @@
      migrate-directory)))
 
 (defn incremental-migration-number-generator []
-  (util-string-utils/prefill (str (core/find-next-migrate-number)) 3 "0"))
+  (format "%03d" (core/find-next-migrate-number)))
 
 (defn timestamp-migration-number-generator []
   (.format (SimpleDateFormat. "yyyyMMddHHmmss") (new Date)))
@@ -39,8 +39,8 @@
   ([migration-name] (create-migration-file (find-or-create-migrate-directory) migration-name))
   ([migrate-directory migration-name]
    (if (and migrate-directory migration-name)
-     (let [migration-file-name (str (migration-number) "_" (loading-utils/dashes-to-underscores migration-name) ".clj")
-           migration-file (new File migrate-directory migration-file-name)]
+     (let [migration-file-name (str (migration-number) "_" (utils/dashes-to-underscores migration-name) ".clj")
+           migration-file (.resolve migrate-directory migration-file-name)]
        (logging/info (str "Creating migration file " migration-file-name "..."))
-       (.createNewFile migration-file)
+       (Files/createFile migration-file (make-array FileAttribute 0))
        migration-file))))

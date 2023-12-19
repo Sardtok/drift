@@ -35,7 +35,7 @@
           namespace-symbol (symbol namespace-name)]
       (logging/info (str "Running " namespace-name " up..."))
       (running-migration namespace-name Boolean/TRUE)
-      (require namespace-symbol)
+      (require :reload namespace-symbol)
       (when-let [up-fn (ns-resolve namespace-symbol 'up)]
         (up-fn)
         (version/update-db-version (core/migration-number-from-namespace migration-namespace))))
@@ -49,7 +49,7 @@
           namespace-symbol (symbol namespace-name)]
       (logging/info (str "Running " namespace-name " down..."))
       (running-migration namespace-name Boolean/FALSE)
-      (require namespace-symbol)
+      (require :reload namespace-symbol)
       (when-let [down-fn (ns-resolve namespace-symbol 'down)]
         (down-fn)
         (version/update-db-version

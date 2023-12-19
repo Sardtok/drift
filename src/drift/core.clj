@@ -1,8 +1,8 @@
 (ns drift.core
   (:require [clojure.string :as string]
-            [clojure.tools.loading-utils :as loading-utils]
-            [drift.config :as config])
-  (:import (java.io File)
+            [drift.config :as config]
+            [drift.utils :as utils])
+  (:import (java.nio.file Files Path Paths LinkOption)
            (java.util Comparator TreeSet)))
 
 (defn
@@ -31,32 +31,42 @@
           result)))))
 
 (defn
-  #^{:doc "Returns the directory where Conjure is running from."}
+  #^{:doc "Returns the directory where Drift is running from."}
   user-directory []
-  (new File (.getProperty (System/getProperties) "user.dir")))
+  (Paths/get (.getProperty (System/getProperties) "user.dir") (make-array String 0)))
+
+(defn find-migrate-dir-name []
+  (let [migrate-dir-name (config/find-migrate-dir-name)]
+    (if (.startsWith migrate-dir-name "/")
+      (subs migrate-dir-name 1)
+      migrate-dir-name)))
 
 (defn
   migrate-directory []
-  (File. ^File (user-directory) ^String (config/find-migrate-dir-name)))
+  (.resolve (user-directory) (find-migrate-dir-name)))
 
 (defn
   #^{:doc "Returns the file object if the given file is in the given directory, nil otherwise."}
   find-directory [directory file-name]
-  (when (and file-name directory (string? file-name) (instance? File directory))
-    (let [file (File. (.getPath directory) ^String file-name)]
-      (when (and file (.exists file))
-        file))))
+  (when-let
+    [file (cond (and (string? file-name) (string? directory))
+                (Paths/get directory file-name)
+                (and (string? file-name) (instance? Path directory))
+                (.resolve directory file-name)
+                :else nil)]
+    (when (Files/exists file (make-array LinkOption 0))
+      file)))
 
 (defn
   #^{:doc "Finds the migrate directory."}
   find-migrate-directory []
   (let [user-directory (user-directory)
-        migrate-dir-name (config/find-migrate-dir-name)]
+        migrate-dir-name (find-migrate-dir-name)]
     (find-directory user-directory migrate-dir-name)))
 
 (defn
   migrate-namespace-dir
-  ([] (migrate-namespace-dir (config/find-migrate-dir-name)))
+  ([] (migrate-namespace-dir (find-migrate-dir-name)))
   ([migrate-dir-name]
    (when migrate-dir-name
      (.substring migrate-dir-name (count (config/find-src-dir))))))
@@ -66,7 +76,7 @@
   migrate-namespace-prefix-from-directory
   ([] (migrate-namespace-prefix-from-directory (config/find-migrate-dir-name)))
   ([migrate-dir-name]
-   (loading-utils/slashes-to-dots (loading-utils/underscores-to-dashes (migrate-namespace-dir migrate-dir-name)))))
+   (utils/slashes-to-dots (utils/underscores-to-dashes (migrate-namespace-dir migrate-dir-name)))))
 
 (defn
   migrate-namespace-prefix []
@@ -76,7 +86,7 @@
   #^{:doc "Returns a string for the namespace of the given file in the given directory."}
   namespace-string-for-file [file-name]
   (when file-name
-    (str (migrate-namespace-prefix) "." (loading-utils/clj-file-to-symbol-string file-name))))
+    (str (migrate-namespace-prefix) "." (utils/clj-file-to-symbol-string file-name))))
 
 (defn
   namespace-name-str [migration-namespace]
@@ -108,12 +118,14 @@
 
 (defn user-migration-namespaces []
   (when-let [migration-namespaces (config/migration-namespaces)]
-    (migration-namespaces (config/find-migrate-dir-name) (migrate-namespace-prefix))))
+    (migration-namespaces (find-migrate-dir-name) (migrate-namespace-prefix))))
 
 (defn default-migration-namespaces []
   (->> (find-migrate-directory)
-       .listFiles
-       (map #(.getName ^File %))
+       Files/list
+       .iterator
+       iterator-seq
+       (map #(str (.getFileName %)))
        (filter #(re-matches #".*\.clj$" %))
        (map namespace-string-for-file)))
 
@@ -178,9 +190,9 @@
   #^{:doc "The migration file with the given migration name."}
   find-migration-file
   ([migration-name] (find-migration-file (find-migrate-directory) migration-name))
-  ([migrate-directory migration-name]
+  ([^Path migrate-directory migration-name]
    (when-let [namespace-str (find-migration-namespace migration-name)]
-     (File. migrate-directory (.getName (File. ^String (loading-utils/symbol-string-to-clj-file namespace-str)))))))
+     (.resolve migrate-directory (.getFileName (Paths/get (utils/symbol-string-to-clj-file namespace-str) (make-array String 0)))))))
 
 (defn
   #^{:doc "Returns the migration namespace for the given migration file."}

@@ -134,8 +134,12 @@ migrate-config. For example:
 ```
 
 The above `migrate-config` will call the function "init" before any
-migrations are run. If you pass parameters to `lein migrate`, they
-will be passed along to the init function.
+migrations are run. You can pass arguments to the init function with
+`lein migrate` by separating them from other args with `--`, e.g.:
+
+```bash
+$ lein migrate -v 10 -- init-arg1 init-arg2
+```
 
 If you want to include a special use or require section in the
 namespace function of all migration files you can use the `:ns-content`

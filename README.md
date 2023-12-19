@@ -1,4 +1,9 @@
-# drift
+# drift 2
+
+**This is a fork of [macourtney/drift](https://github.com/macourtney/drift)
+compatible with Java 9+. It has at least one breaking change,
+requiring that args for init-fn are appended behind `--`
+when using `lein migrate`.**
 
 Drift is a migration library written in Clojure. Drift works much like
 Rails migrations where a directory in your project contains all the
@@ -14,7 +19,7 @@ To use Drift you'll need to add drift to your Leiningen
 project. Simply add the following to your project.clj file:
 
 ```clojure
-[drift "x.x.x"]
+[com.sigmund-hansen/drift "x.x.x"]
 ```
 
 Where "x.x.x" is the latest version of drift which you can find on

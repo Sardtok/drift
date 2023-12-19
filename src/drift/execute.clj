@@ -31,12 +31,15 @@
       (runner/update-to-version (version-number version)))))
 
 (defn
-  run [config-fn-symbol args]
-  (let [[opts remaining] (args/parse-migrate-args args)]
-    (if (empty? remaining)
-      (config/with-config-fn-symbol
-        (or (:config opts) config-fn-symbol)
-        (fn []
-          (migrate (:version opts) remaining)))
-      (do (logging/error "Invalid arguments:" (string/join " " remaining))
-          (args/print-usage "migrate" args/migrate-arg-specs)))))
+  run
+  ([args] (run nil args))
+  ([config-fn-symbol args]
+   (let [[opts init-fn-args remaining] (args/parse-migrate-args args)]
+
+     (if (empty? remaining)
+       (config/with-config-fn-symbol
+         (or (:config opts) config-fn-symbol)
+         (fn []
+           (migrate (:version opts) init-fn-args)))
+       (do (logging/warn "Unknown arguments:" (string/join " " remaining))
+           (args/print-usage "migrate" args/migrate-arg-specs))))))

@@ -21,13 +21,15 @@
   "do a partial parse of args... removing only options we know about and leaving everything else to
    be passed on to the user-supplied init function. tools.cli is no use for this"
   [args specs]
-  (reduce (fn [[opts args] spec]
-            (let [[before match-rest] (split-args args (:matcher spec))
-                  [new-opts after] (remove-opt match-rest spec)]
+  (let [[opts args] (reduce (fn [[opts args] spec]
+                              (let [[before match-rest] (split-args args (:matcher spec))
+                                    [new-opts after] (remove-opt match-rest spec)]
 
-              [(merge opts new-opts) (vec (concat before after))]))
-          [{} args]
-          specs))
+                                [(merge opts new-opts) (vec (concat before after))]))
+                            [{} args]
+                            specs)
+        [remaining-args [_ & init-fn-args]] (split-with #(not= "--" %) args)]
+    [opts init-fn-args remaining-args]))
 
 (def config-arg-spec
   {:key :config
@@ -56,7 +58,7 @@
 (defn print-usage
   #^{:doc "Prints out how to use a command with a given name and specification."}
   [cmd spec & [required-arg]]
-  (println "Usage: lein" cmd "[options]" (or required-arg ""))
+  (println "Usage: lein" cmd "[options]" (or required-arg "") "-- [args for init-fn]")
   (println "Options:")
   (doseq [arg spec]
     (println (str " " (string/join " " (:matcher arg)) "\t" (:desc arg)))

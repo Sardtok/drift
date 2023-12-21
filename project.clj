@@ -1,6 +1,6 @@
 ;; IMPORTANT: When bumping the version number here, be sure to bump it also in
 ;; src/drift/drift_version.clj! 
-(defproject com.sigmund-hansen/drift "2.0.0-SNAPSHOT"
+(defproject com.sigmund-hansen/drift "2.0.0-rc2"
   :description "Drift is a rails like migration framework for Clojure."
   :url "https://github.com/Sardtok/drift"
   :license {:name         "Apache-2.0 License"

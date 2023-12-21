@@ -10,6 +10,6 @@
                          (#(when % (symbol %))))]
     (eval-in-project
       (update-in project [:dependencies]
-                 conj ['drift drift-version/version])
+                 conj ['com.sigmund-hansen/drift drift-version/version])
       `(drift.execute/run '~drift-config '~args)
       '(require 'drift.execute))))

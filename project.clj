@@ -2,6 +2,7 @@
 ;; src/drift/drift_version.clj! 
 (defproject com.sigmund-hansen/drift "2.0.0-SNAPSHOT"
   :description "Drift is a rails like migration framework for Clojure."
+  :url "https://github.com/Sardtok/drift"
   :license {:name         "Apache-2.0 License"
             :url          "https://www.apache.org/licenses/LICENSE-2.0"}
   :dependencies [[org.clojure/tools.logging "1.2.4"]]

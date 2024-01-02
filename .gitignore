@@ -10,3 +10,5 @@ classes
 .lein-deps-sum
 target/
 *.clj~
+
+pom.xml.asc

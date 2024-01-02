@@ -5,6 +5,9 @@ compatible with Java 9+. It has at least one breaking change,
 requiring that args for init-fn are appended behind `--`
 when using `lein migrate`.**
 
+![Tests](https://github.com/Sardtok/drift/actions/workflows/run-tests.yml/badge.svg)
+[![Clojars Project](https://img.shields.io/clojars/v/com.sigmund-hansen/drift.svg)](https://clojars.org/com.sigmund-hansen/drift)
+
 Drift is a migration library written in Clojure. Drift works much like
 Rails migrations where a directory in your project contains all the
 migration files. Drift will detect which migration files need to be

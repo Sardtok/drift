@@ -4,7 +4,8 @@
             [drift.args :as args]
             [drift.builder :as builder]
             [drift.config :as config]
-            [drift.core :as core]))
+            [drift.core :as core])
+  (:import (java.nio.file Files OpenOption Path)))
 
 (defn
   #^{:doc "Prints out how to use the generate migration command."}
@@ -29,10 +30,10 @@
 
 (defn
   #^{:doc "Generates the migration content and saves it into the given migration file."}
-  generate-file-content [migration-file ns-content up-content down-content]
+  generate-file-content [^Path migration-file ns-content up-content down-content]
   (let [migration-namespace (core/migration-namespace migration-file)
         content (create-file-content migration-namespace ns-content up-content down-content)]
-    (spit migration-file content)))
+    (spit (Files/newBufferedWriter migration-file (make-array OpenOption 0)) content)))
 
 (defn
   #^{:doc "Creates the migration file from the given migration-name."}
@@ -43,7 +44,8 @@
    (if migration-name
      (let [migrate-directory (builder/find-or-create-migrate-directory)
            migration-file (builder/create-migration-file migrate-directory migration-name)]
-       (generate-file-content migration-file ns-content up-content down-content))
+       (generate-file-content migration-file ns-content up-content down-content)
+       (logging/info "Migration file created successfully."))
      (migration-usage))
    (core/run-finished)))
 

@@ -2,7 +2,7 @@
   (:require [clojure.string :as string]
             [drift.config :as config]
             [drift.utils :as utils])
-  (:import (java.nio.file Files Path Paths LinkOption)
+  (:import (java.nio.file Files LinkOption Path Paths)
            (java.util Comparator TreeSet)))
 
 (defn
@@ -196,6 +196,6 @@
 
 (defn
   #^{:doc "Returns the migration namespace for the given migration file."}
-  migration-namespace [migration-file]
+  migration-namespace [^Path migration-file]
   (when migration-file
-    (namespace-string-for-file (.getName migration-file))))
+    (namespace-string-for-file (-> migration-file (.getFileName) (.toString)))))

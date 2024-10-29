@@ -26,7 +26,7 @@ project. Simply add the following to your project.clj file:
 ```
 
 Where "x.x.x" is the latest version of drift which you can find on
-clojars: http://clojars.org/drift
+clojars: https://clojars.org/com.sigmund-hansen/drift
 
 If you want to use the lein commands, you'll need to add the above
 vector to your `:dev-dependencies` vector. If you want to access drift
